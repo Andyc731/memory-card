@@ -21,7 +21,7 @@ function App() {
     const fetchData = async () => {
       try {
         const responses = await Promise.all(urls.map(url => fetch(url).then(response => response.json())));
-        const pokemonData = responses.map(pokemon => ({ img: pokemon.sprites.front_default, clicked: false }));
+        const pokemonData = responses.map(pokemon => ({ name: capitalize(pokemon.name) + pokemon.name.slice(1), img: pokemon.sprites.front_default, clicked: false }));
         setDivArray(pokemonData);
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -39,6 +39,10 @@ function App() {
     checkAllTrue() ? setIsDialogOpen(true) : setIsDialogOpen(false);
 
   }, [divArray])
+
+  const capitalize = (str) => {
+    return str.charAt(0).toUpperCase() + str.slice(1)
+  }
 
   const randomizeArray = (obj) => {
     const updatedObj = markClicked(obj);
@@ -84,13 +88,14 @@ function App() {
 
   return (
     <>
-      <div>
+      <div className='container'>
         <p>score: {score}</p>
         <p>high score: {highScore}</p>
         <div className="card-container">
           {divArray.map((obj, index) => {
             return <div key={index} className='card' onClick={() =>randomizeArray(obj)}>
               <img src={obj.img} alt="" />
+              <p className='pokeName'>{obj.name}</p>
             </div>
           }
           )}
