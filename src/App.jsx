@@ -5,9 +5,10 @@ import './App.css'
 
 function App() {
   const [divArray, setDivArray] = useState([]);
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [winDialog, setWinDialog] = useState(false);
   const [score, setScore] = useState(0);
   const [highScore, setHighScore] = useState(0);
+  const [loseDialog, setLoseDialog] = useState(false);
 
   const urls = [];
 
@@ -36,7 +37,7 @@ function App() {
       return divArray.every(obj => obj.clicked === true)
     }
 
-    checkAllTrue() ? setIsDialogOpen(true) : setIsDialogOpen(false);
+    checkAllTrue() ? setWinDialog(true) : setWinDialog(false);
 
   }, [divArray])
 
@@ -60,6 +61,7 @@ function App() {
       }
       setScore(0);
       resetDivArray();
+      setLoseDialog(true);
     } else {
       setScore(prevScore => prevScore + 1);
     }
@@ -85,6 +87,14 @@ function App() {
     return newArray;
   }
 
+  const closeWinDialog = () => {
+    setWinDialog(false);
+  }
+
+  const closeLoseDialog = () => {
+    setLoseDialog(false);
+  }
+
 
   return (
     <>
@@ -101,11 +111,21 @@ function App() {
           )}
 
         </div>
-        {isDialogOpen && (
-          <dialog open>
-            <p>You Win!</p>
-            <button>Restart</button>
-          </dialog>
+        {winDialog && (
+          <div className='dialog-container'>
+              <dialog open className='dialog'>
+                <p>You Win!</p>
+                <button onClick={closeWinDialog}>Restart</button>
+              </dialog>
+          </div>
+        )}
+        {loseDialog && (
+          <div className='dialog-container'>
+
+            <dialog open className='dialog'>
+              <button onClick={closeLoseDialog}>Restart</button>
+            </dialog>
+          </div>
         )}
       </div>
     </>
