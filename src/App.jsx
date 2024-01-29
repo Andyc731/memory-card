@@ -5,6 +5,9 @@ import './App.css'
 
 function App() {
   const [divArray, setDivArray] = useState([]);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [score, setScore] = useState(0);
+  const [highScore, setHighScore] = useState(0);
 
   const urls = [];
 
@@ -28,13 +31,40 @@ function App() {
     fetchData();
   }, []);
 
+  useEffect(() => {
+    const checkAllTrue = () => {
+      return divArray.every(obj => obj.clicked === true)
+    }
+
+    checkAllTrue() ? setIsDialogOpen(true) : setIsDialogOpen(false);
+
+  }, [divArray])
+
   const randomizeArray = (obj) => {
     const updatedObj = markClicked(obj);
     const updatedArray = divArray.map(item => (item === obj ? updatedObj : item));
     const newArray = shuffleArray(updatedArray);
     
-    console.log(newArray);
     setDivArray(newArray);
+    updateSore(obj);
+  }
+
+  const updateSore = (obj) => {
+    if (obj.clicked === true) {
+      if (score > highScore) {
+        setHighScore(score);
+      }
+      setScore(0);
+      resetDivArray();
+    } else {
+      setScore(prevScore => prevScore + 1);
+    }
+  }
+
+  const resetDivArray = () => {
+    setDivArray(prevArray => (
+      prevArray.map(obj => ({...obj, clicked: false}))
+    ))
   }
 
   const markClicked = (obj) => {
@@ -52,10 +82,11 @@ function App() {
   }
 
 
-
   return (
     <>
       <div>
+        <p>score: {score}</p>
+        <p>high score: {highScore}</p>
         <div className="card-container">
           {divArray.map((obj, index) => {
             return <div key={index} className='card' onClick={() =>randomizeArray(obj)}>
@@ -65,6 +96,12 @@ function App() {
           )}
 
         </div>
+        {isDialogOpen && (
+          <dialog open>
+            <p>You Win!</p>
+            <button>Restart</button>
+          </dialog>
+        )}
       </div>
     </>
   )
